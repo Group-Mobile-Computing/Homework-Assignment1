@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">CSE535-Assignment 1</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">Assignment 1</string>
+    <string name="main_title">Assignment 1</string>
+    <string name="Info_label">Get Required Info</string>
+    <string name="Exit_label">Exit</string>
+    <string name="about_text">\
+City, State and Joke of the day Goes here .....................</string>
+</resources>
