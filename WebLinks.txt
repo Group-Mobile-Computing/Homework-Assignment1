@@ -1,0 +1,3 @@
+Android User Interface Design: Working With Fragments:
+
+http://mobile.tutsplus.com/tutorials/android/android-sdk_fragments/
