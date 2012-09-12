@@ -21,6 +21,9 @@ public class MainActivity extends Activity {
         //Set Location and Joke to processing state
         protocol.deltaOnCreate();
         
+        //Begin Gathering all the data required
+        protocol.getAndroidIP();
+        
     }
     
     /**
