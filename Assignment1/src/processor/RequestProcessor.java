@@ -193,12 +193,12 @@ public class RequestProcessor {
 	}
 	
 	/** 
-	 * Get Location in format "City, State" on the basis of provided IP.	 
+	 * Get Location as a Location object on the basis of provided IP.	 
 	 *  @param ipaddressofdevice string based IP address of the host.
 	 */
-	public static String getLocationFromIP(String ipaddressofdevice)
+	public static Location getLocationFromIP(String ipaddressofdevice)
 	{
-		String Location = null;
+		Location location = null;
 		try
 		{        
 	        if (ipaddressofdevice != null)
@@ -207,32 +207,32 @@ public class RequestProcessor {
 	        	
 		        if (Data != null & Data.length() > 0) 
 		        {	        	
-		        	Location = 	Data.substring(
-		        				Data.indexOf(ProcessorProperties.LocationFromIPCityElement), Data.length()).
-		        				substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromIPCityElement), Data.length()).
-		        				indexOf(ProcessorProperties.LocationFromIPCityElementEnd)).replace(ProcessorProperties.LocationFromIPCityElement, "") + ", " +
-		        				Data.substring(
+		        	location = 	new Location(Data.substring(
 		    	        		Data.indexOf(ProcessorProperties.LocationFromIPStateElement), Data.length()).
 		    	        		substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromIPStateElement), Data.length()).
-		    	        		indexOf(ProcessorProperties.LocationFromIPStateElementEnd)).replace(ProcessorProperties.LocationFromIPStateElement, "");
+		    	        		indexOf(ProcessorProperties.LocationFromIPStateElementEnd)).replace(ProcessorProperties.LocationFromIPStateElement, ""),
+		    	        		Data.substring(
+		        				Data.indexOf(ProcessorProperties.LocationFromIPCityElement), Data.length()).
+		        				substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromIPCityElement), Data.length()).
+		        				indexOf(ProcessorProperties.LocationFromIPCityElementEnd)).replace(ProcessorProperties.LocationFromIPCityElement, ""));
 		        } 
 	        }       
 		}
 		catch (Exception e)
 		{
-			Location = null;		
+			location = null;		
 		}
 		
-		return Location;
+		return location;
 	}
 
 	/** 
-	 * Get Location in format "City, State" on the basis of provided Coordinates (Longitude and Latitude Values).
+	 * Get Location as a Location object on the basis of provided Coordinates (Longitude and Latitude Values).
 	 * *  @param ipaddressofdevice string based IP address of the host.
 	 */
-	public static String getLocationFromCoordinate(Coordinate coordinate)
+	public static Location getLocationFromCoordinate(Coordinate coordinate)
 	{
-		String Location = null;
+		Location location = null;
 		try
 		{
 			if (coordinate.getLongitude() != null & coordinate.getLatitude() != null)
@@ -245,24 +245,24 @@ public class RequestProcessor {
 		        {		        	
 			        if (Data.length() > 0) 
 			        {	        	
-			        	Location = 	Data.substring(
+			        	location = 	new Location(Data.substring(
+			        				Data.indexOf(ProcessorProperties.LocationFromCoordinateStateElement), Data.length()).
+			        				substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromCoordinateStateElement), Data.length()).
+			        				indexOf(ProcessorProperties.LocationFromCoordinateStateElementEnd)).replace(ProcessorProperties.LocationFromCoordinateStateElement, ""),
+			        				Data.substring(
 			        				Data.indexOf(ProcessorProperties.LocationFromCoordinateCityElement), Data.length()).
 			        				substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromCoordinateCityElement), Data.length()).
-			        				indexOf(ProcessorProperties.LocationFromCoordinateCityElementEnd)).replace(ProcessorProperties.LocationFromCoordinateCityElement, "") + ", " +
-			        				Data.substring(
-			    	        		Data.indexOf(ProcessorProperties.LocationFromCoordinateStateElement), Data.length()).
-			    	        		substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromCoordinateStateElement), Data.length()).
-			    	        		indexOf(ProcessorProperties.LocationFromCoordinateStateElementEnd)).replace(ProcessorProperties.LocationFromCoordinateStateElement, "");
+			        				indexOf(ProcessorProperties.LocationFromCoordinateCityElementEnd)).replace(ProcessorProperties.LocationFromCoordinateCityElement, ""));
 			        }  
 		        }		        		              	  
 			}
 		}
 		catch (Exception e)
 		{
-			Location = null;			
+			location = null;			
 		}
 		
-		return Location;
+		return location;
 	}
 	
 	/** 
