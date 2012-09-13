@@ -2,6 +2,9 @@ package edu.cse535.assignment1;
 
 //import ui.Dummy;
 //import logic.GetDeviceIPTask;
+import java.util.Date;
+
+import commons.Coordinate;
 import commons.Location;
 
 import logic.IPServiceProviderUtil;
@@ -20,198 +23,386 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
+
+	static Date		ipRefreshed			= 	null;
+	static Date		locationRefreshed	=	null;
+	static Date		coordinateRefreshed	=	null;
+
 	logic.Protocol protocol = null;
 	commons.Coordinate coordinate = null;
-	String ip = null;
+	static String ip = null;
 	android.location.LocationManager locationManager = null;
 	LocationTask locationTask = null;
 	boolean networkLocationEnabled = false;
 	boolean gpsLocationEnabled= false;
-	commons.Location location=null;
-	
-	String locationTag="location";
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        //Load in the layout from UI
-        setContentView(ui.Dummy.getContentView());
-        
-        //Create the Protocol object we need
-       // protocol = new logic.Protocol();
-        
-        //Set Location and Joke to processing state
-        ui.Dummy.setWaitingJoke();
-    	ui.Dummy.setWaitingLocation();
-    	
-    	//Gather Device IP
-    	Log.d(locationTag,"Starting application");
-    	ip = getDeviceIP();
-    	Toast msg = Toast.makeText(getApplicationContext(), "ip: "+ip, Toast.LENGTH_LONG);
-		msg.show();
-    	Log.d(locationTag, "getDeviceIP returned:\t"+ip);
-    	
-    	//Determine if some sort of location service is available on device
-    	Log.d("locationServiceAvailable", "Start determineLocationEnabled gps:\t"+gpsLocationEnabled+" network: "+networkLocationEnabled);
-    	determineLocationEnabled();
-    	Log.d("locationServiceAvailable", "End determineLocationEnabled gps:\t"+gpsLocationEnabled+" network: "+networkLocationEnabled);
-    	
-    	//Get Location from ip and or sensors using remote service
-    	//If both are unavailable then we will display no Location information available
-    	if(ip==null && !gpsLocationEnabled && !networkLocationEnabled)
-    	{
-    		Log.d("LocationGathering", "No Location Information Available");
-    	}
-    	
-    	//If IP address is available get location from remote service
-    	if(ip!=null)
-    	{
-    		Log.d("LocationGathering","Start getDeviceLocationFromIP:\t"+ip);
-    		getDeviceLocationFromIP(ip);
-    		
-    		Log.d("LocationGathering","End getDeviceLocationFromIP:\t"+ip+"\n");
-    	}
-    	else
-    	{
-    		//android.location.Location location = 
-    	}
-    	
-   
-    	//While getting location from IP process is running in async thread
-    	//Start up the location listening
-    	getDeviceLocation();
-    	
-    	
-    }
-    
-    /**
-     * Recollects GPS information maps it to a Location.  If GPS is unavailable
-     * collects IP and maps it to a Location.  Queries Joke server for joke.
-     * Presents updated information to user.  While these are processing they are
-     * the components are set to processing state.
-     * @param v  Current screen user is looking at.  In this case the only screen
-     * in the application
-     */
-    private void refresh(View v)
-    {
-    	
-    }
-    
-    /**
-     * Terminates application normally.  Cleans up data.
-     
-     * @param v Current screen user is looking at.  In this case the only screen
-     * in the application
-     */
-    private void exit(View v)
-    {
-    	//Not implement see OneNote Assignment 1 @ Mike TableTop
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
-    
-    
-    
-    
-    
-    
-    
-    private String getDeviceIP()
-    {
-    	String ret=null;
-    	GetDeviceIPTask getIP = new GetDeviceIPTask();
-		getIP.execute(new String[] {IPServiceProviderUtil.getIPServiceURL()});
+
+	static commons.Location location	=	null;
+
+	public static int counter = 0;
+	public static int created=0;
+	String locationTag="location";
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+
+		super.onCreate(savedInstanceState);
+
+		//Load in the layout from UI
+		setContentView(ui.Dummy.getContentView());
+
+		//Create the Protocol object we need
+		// protocol = new logic.Protocol();
+
+		//Set Location and Joke to processing state
+		ui.Dummy.setWaitingJoke();
+		ui.Dummy.setWaitingLocation();
+
+		//Gather Device IP
+		Log.d(locationTag,"Starting application");
+		updateDeviceIP();
+		//Toast msg = Toast.makeText(getApplicationContext(), "ip: "+ip, Toast.LENGTH_LONG);
+		//msg.show();
+		Log.d(locationTag, "getDeviceIP returned:\t"+ip);
+
+		//Determine if some sort of location service is available on device
+		Log.d("locationServiceAvailable", "Start determineLocationEnabled gps:\t"+gpsLocationEnabled+" network: "+networkLocationEnabled);
+		determineLocationEnabled();
+		Log.d("locationServiceAvailable", "End determineLocationEnabled gps:\t"+gpsLocationEnabled+" network: "+networkLocationEnabled);
+
+		//Get Location from ip and or sensors using remote service
+		//If both are unavailable then we will display no Location information available
+		if(ip==null && !gpsLocationEnabled && !networkLocationEnabled)
+		{
+			Log.d("LocationGathering", "No Location Information Available");
+		}
+
+		//If IP address is available get location from remote service
+		if(ip!=null)
+		{
+			Log.d("LocationGathering","Start getDeviceLocationFromIP:\t"+ip);
+			getDeviceLocationFromIP(ip);
+
+			Log.d("LocationGathering","End getDeviceLocationFromIP:\t"+ip+"\n");
+		}
+		else
+		{
+			//Ip is not available
+		}
+
+
+		//While getting location from IP process is running in async thread
+		//Start up the location listening which will update the Location UI section
+		updateDeviceLocation();
+
+	}
+
+	/**
+	 * Recollects GPS information maps it to a Location.  If GPS is unavailable
+	 * collects IP and maps it to a Location.  Queries Joke server for joke.
+	 * Presents updated information to user.  While these are processing they are
+	 * the components are set to processing state.
+	 * @param v  Current screen user is looking at.  In this case the only screen
+	 * in the application
+	 */
+	private void refresh(View v)
+	{
+
+	}
+
+	/**
+	 * Terminates application normally.  Cleans up data.
+
+	 * @param v Current screen user is looking at.  In this case the only screen
+	 * in the application
+	 */
+	private void exit(View v)
+	{
+		//Not implement see OneNote Assignment 1 @ Mike TableTop
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+
+
+
+
+
+
+
+	/**
+	 * If IP is null we will wait 3 seconds for the operation to complete and produce a new possibly null ip
+	 * according to the following cases:
+	 * Ip has never been updated
+	 * 	last update is null and up is null
+	 * 	we will use async getdeviceIPTask and wait for it to finish up to 3 seconds
+	 * 
+	 * IP has been updated recently
+	 * 	last update is not null and ip may or may not be null 
+	 * 	last update is within allowed timewindow
+	 * 	we will do nothing
+	 * 
+	 * IP has been updated long
+	 * 	last update is not null, ip may or may not be null
+	 * 	last update is out of allowed timewindow
+	 * 	we will use async getdeviceIPtask and not wait for it to finish
+	 * 
+	 * @return void
+	 */
+	private void updateDeviceIP()
+	{
+
+
+		String ret=null;
+		Toast msg;
+		if(ipRefreshed==null)
+		{
+			//never updated
+			//we are using async thread and waiting 3 seconds
+			GetDeviceIPTask getIP = new GetDeviceIPTask();
+			getIP.execute(new String[] {IPServiceProviderUtil.getIPServiceURL()});
+			try
+			{
+				ret = getIP.get(configuration.Config.getTimeout(), configuration.Config.getTimeoutTimeUnit());
+				setIP(ret);
+
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				ret=null;
+			}
+			msg = Toast.makeText(getApplicationContext(), "IP first update:\t"+ip, Toast.LENGTH_LONG);
+		}
+		else
+		{
+			Date currentTime = new Date();
+			Date windowTime = new Date();
+			windowTime.setTime(ipRefreshed.getTime()+configuration.Config.getIPRefreshWindow());
+			if(currentTime.compareTo(windowTime)<1)
+			{
+				//Last refresh time was recent
+				//we are doing nothing
+				msg = Toast.makeText(getApplicationContext(), "IP still fresh:\t"+ip, Toast.LENGTH_LONG);
+			}
+			else
+			{
+				//last refresh time was not recent
+				//we are using the async thread but not waiting
+				GetDeviceIPTask getIP = new GetDeviceIPTask();
+				getIP.execute(new String[] {IPServiceProviderUtil.getIPServiceURL()});
+				msg = Toast.makeText(getApplicationContext(), "IP not fresh:\t"+ip, Toast.LENGTH_LONG);
+			}
+		}
+		msg.show();
+	}
+
+
+
+	private void setIP(String ip)
+	{
+		this.ip = ip;
+		ipRefreshed = new Date();
+	}
+
+	private void getDeviceLocationFromIP(String ip)
+	{
+		if(ip!=null)
+		{
+			GetLocationFromIPTask getIPLocation = new GetLocationFromIPTask();
+			getIPLocation.execute(new String[] {ip});
+		}
+	}
+
+	private void determineLocationEnabled()
+	{
+		//boolean ret = false;
+		//Log.d(locationTag,"Start Location Enabled");
+		if(locationManager==null)
+		{
+			locationManager = (android.location.LocationManager) this.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+		}
+
 		try
 		{
-			ret = getIP.get(configuration.Config.getTimeout(), configuration.Config.getTimeoutTimeUnit());
-			
+			gpsLocationEnabled = locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER);
+			networkLocationEnabled = locationManager.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER);
+
 		}
 		catch(Exception e)
 		{
+			System.out.println("Error");
 			e.printStackTrace();
-			ret=null;
 		}
-		Log.d(locationTag,"IP after post ip: "+ret);
+		//return ret;
+	}
+
+	/**
+	 * Creates a new LocationListener class that will receive updates every 30 seconds.  If a locationlistener is already created no new locationlistener will
+	 * be created.  If GPS and network sensors are not available no location listener will be created
+	 */
+	private void createLocationListener()
+	{
+		if(locationTask==null)
+		{
+			locationTask = new LocationTask();
+
+			if(gpsLocationEnabled)
+			{
+				locationManager.requestLocationUpdates(android.location.LocationManager.GPS_PROVIDER, 30*1000, 0, locationTask);
+			}
+			else
+			{
+				if(networkLocationEnabled)
+				{
+					locationManager.requestLocationUpdates(android.location.LocationManager.NETWORK_PROVIDER, 30*1000, 0, locationTask);
+				}
+			}
+		}
+	}
+
+	private void setLocation(commons.Location local)
+	{
+		this.location = local;
+		locationRefreshed = new Date();
+	}
+
+
+	
+	private void updateDeviceLocation()
+	{
+		//int situation = 0;
+		//Have we gotten a location previously
+		Toast msg = Toast.makeText(getApplicationContext(), "Nothing to say", Toast.LENGTH_LONG);
+		switch(getLocationSitutation())
+		{
+		case 1:
+			//first location gathering
+			msg = Toast.makeText(getApplicationContext(), "First Location Gathering", Toast.LENGTH_LONG);
+			updateLocation();
+			break;
+		case 2:
+			//nth location gathering, location is still fresh
+			//Do nothing location is still up to date
+			msg = Toast.makeText(getApplicationContext(), "Location Still Fresh city "+location.getCity()+" state "+location.getState(), Toast.LENGTH_LONG);
+			break;
+		case 3:
+			//nth location gathering, location is still fresh but no location
+			//object is null
+			msg = Toast.makeText(getApplicationContext(), "Location null and Fresh", Toast.LENGTH_LONG);
+			updateLocation();
+			break;
+		case 4:
+			//nth location gathering, location is outdated
+			msg = Toast.makeText(getApplicationContext(), "Location Outdated city "+location.getCity()+" state "+location.getState(), Toast.LENGTH_LONG);
+			updateLocation();
+			break;
+		default:
+			break;
+		}
+		
+		msg.show();
+	}
+	
+	private void updateLocation()
+	{
+		if(coordinate == null)
+		{
+
+			//We do not have a gps coordinate
+			//This can be from locationTask not being created, or no sensors available
+
+			//IF we do not have a sensor listener then create one
+			createLocationListener();
+
+			//If we do not have gps coordinates because we do not have sensors or we do not have a fix lets get the location from IP
+			getDeviceLocationFromIP(ip);
+
+		}
+		else
+		{
+			//We have sensor data so lets use the other service
+			getDeviceLocationFromGPS(coordinate);
+		}
+	}
+
+	/*
+	 * This is first location gathering
+	 * 	locationRefreshed==null, 
+	 * 
+	 * This is nth location gathering and Location is fresh
+	 * 
+	 * This is nth location gathering and Location is not fresh
+	 *
+	 * Location is outdated
+	 * 	IP is null
+	 * 	coordinates are null
+	 * 	is location Listener is null
+	 * Location is not outdated
+	 * 
+	 * output 1 
+	 */
+	private int getLocationSitutation()
+	{
+		int ret =0;
+		if(locationRefreshed == null)
+		{
+			//first location gathering
+			ret = 1;
+		}
+		else
+		{
+			//nth location gathering
+			Date currentTime = new Date();
+			Date windowTime = new Date();
+			windowTime.setTime(locationRefreshed.getTime()+configuration.Config.getLocationRefreshWindow());
+			if(currentTime.compareTo(windowTime)<1)
+			{
+				//Location is still fresh
+				ret = 2;
+				if(location==null)
+				{
+					ret =3;
+				}
+			}
+			else
+			{
+				//Location is outdated
+				ret = 4;
+			}
+
+		}
+
 		return ret;
-    }
-    
-    private void getDeviceLocationFromIP(String ip)
-    {
-    	GetLocationFromIPTask getIPLocation = new GetLocationFromIPTask();
-    	getIPLocation.execute(new String[] {ip});
-    }
-    
-    private void determineLocationEnabled()
-    {
-    	//boolean ret = false;
-    	//Log.d(locationTag,"Start Location Enabled");
-    	if(locationManager==null)
-    	{
-    		locationManager = (android.location.LocationManager) this.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-    	}
-    	
-    	try
-    	{
-    		gpsLocationEnabled = locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER);
-    		networkLocationEnabled = locationManager.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER);
-    		
-    	}
-    	catch(Exception e)
-    	{
-    		System.out.println("Error");
-    		e.printStackTrace();
-    	}
-    	//return ret;
-    }
-    
-    private void getDeviceLocation()
-    {
-    	locationTask = new LocationTask();
-    	
-    	if(gpsLocationEnabled)
-    	{
-    		locationManager.requestLocationUpdates(android.location.LocationManager.GPS_PROVIDER, 0, 0, locationTask);
-    	}
-    	else
-    	{
-    		if(networkLocationEnabled)
-    		{
-    			locationManager.requestLocationUpdates(android.location.LocationManager.NETWORK_PROVIDER, 0, 0, locationTask);
-    		}
-    	}
-    }
-    
-    
-    
-    
-    public class LocationTask implements LocationListener{
-		 
+	}
+
+
+	
+
+
+	private void getDeviceLocationFromGPS(Coordinate coordinate2) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+
+
+	public class LocationTask implements LocationListener{
+
 
 		public void onLocationChanged(android.location.Location location) {
-			//commons.Coordinate newCoordinate = new commons.Coordinate(location.getLongitude(), location.getLatitude());
-			if(LocationManager.isMoreAccurate(location,coordinate))
+			if(LocationManager.isAllowed(location,coordinate))
 			{
 				coordinate = new commons.Coordinate(location.getLongitude(), location.getLatitude());
-		    	/*if(gpsLocationEnabled)
-		    	{
-		    		locationManager.requestLocationUpdates(android.location.LocationManager.GPS_PROVIDER,5 * 60 * 1000 , 0, locationTask);
-		    	}
-		    	else
-		    	{
-		    		if(networkLocationEnabled)
-		    		{
-		    			locationManager.requestLocationUpdates(android.location.LocationManager.NETWORK_PROVIDER, 5 * 60 * 1000, 0, locationTask);
-		    		}
-		    	}*/
-				//protocol.deltaCoordinate(coordinate);
-				Toast msg = Toast.makeText(getApplicationContext(), "Coordinate: "+coordinate.toString(), Toast.LENGTH_LONG);
+				Toast msg = Toast.makeText(getApplicationContext(), "counter: "+counter +"Coordinate: "+coordinate.toString(), Toast.LENGTH_LONG);
 				msg.show();
+				counter++;
 				Log.d("SensorLocation", "coordinate more accurate:\t"+coordinate.toString());
+				//setCoordinate
 			}
 			else
 			{
@@ -224,7 +415,7 @@ public class MainActivity extends Activity {
 			String msg = "GPS disabled";
 			determineLocationEnabled();
 			System.out.println(msg);
-		
+
 		}
 
 		public void onProviderEnabled(String provider) {
@@ -237,11 +428,11 @@ public class MainActivity extends Activity {
 
 		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 			// TODO Auto-generated method stub
-			
+
 		}
-    	
-    }
-    
+
+	}
+
 	//Structure of <> is Parameters, where to place update, and where to place result
 	class GetDeviceIPTask extends AsyncTask<String, Void, String> {
 
@@ -255,14 +446,15 @@ public class MainActivity extends Activity {
 			return ret;
 		}
 
-	    protected void onPostExecute(String feed) {
-	        // TODO: do somethisng with the feed
-	    	String result = IPServiceProviderUtil.parseIPFromCheckIP(feed);
-	    	Log.d(locationTag,"finished everything:\t"+result);
-	    	//getDeviceLocationFromIP(ip);
-	    	
-	    }
-		
+		protected void onPostExecute(String feed) {
+			// TODO: do somethisng with the feed
+			//String result = IPServiceProviderUtil.parseIPFromCheckIP(feed);
+			setIP(feed);
+			Log.d(locationTag,"finished everything:\t"+feed);
+			//getDeviceLocationFromIP(ip);
+
+		}
+
 	}//End GetDeviceIPTask
 
 	class GetLocationFromIPTask extends AsyncTask<String,Void,commons.Location>
@@ -273,19 +465,22 @@ public class MainActivity extends Activity {
 			//Log.d(locationTag,"Starting getLocationFromIPTask with param: "+params[0]);
 			commons.Location ret = null;
 			ret = processor.RequestProcessor.getLocationFromIP(params[0]);
-			//Log.d(locationTag,"getLocationFromIPTask:\t "+ret.getCity()+" "+ret.getState());
+			Log.d(locationTag,"getLocationFromIPTask:\t "+ret.getCity()+" "+ret.getState());
+			/*Toast msg = Toast.makeText(getApplicationContext(), "IP Background Task location: "+ret.getCity()+" state:"+ret.getState(), Toast.LENGTH_LONG);
+			msg.show();*/
 			return ret;
 		}
 
 		@Override
-	    protected void onPostExecute(commons.Location feed) {
-	        // TODO: do somethisng with the feed
-			
-	    	Log.d("LocationGathering","End of IPTASK:\tcity:"+feed.getCity()+" state:"+feed.getState());
-	    	Toast msg = Toast.makeText(getApplicationContext(), "location: "+feed.getCity()+" state:"+feed.getState(), Toast.LENGTH_LONG);
+		protected void onPostExecute(commons.Location feed) {
+			// TODO: do somethisng with the feed
+
+			Log.d("LocationGathering","End of IPTASK:\tcity:"+feed.getCity()+" state:"+feed.getState());
+			Toast msg = Toast.makeText(getApplicationContext(), "IP Task location: "+feed.getCity()+" state:"+feed.getState(), Toast.LENGTH_LONG);
+			setLocation(feed);
 			msg.show();
-	    	
-	    }
-		
+
+		}
+
 	}
 }

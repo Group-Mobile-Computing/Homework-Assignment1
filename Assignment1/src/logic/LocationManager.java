@@ -1,5 +1,7 @@
 package logic;
 
+import java.util.Date;
+
 import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
@@ -7,12 +9,32 @@ import android.os.Bundle;
 public class LocationManager implements android.location.LocationListener{
 
 	private boolean updated = false;
+	private static Date previous = null;
 	//private Activity caller;
 	
 
-	public static boolean isMoreAccurate(android.location.Location location, commons.Coordinate coordinate)
+	public static boolean isAllowed(android.location.Location location, commons.Coordinate coordinate)
 	{
-		boolean ret = true;
+		boolean ret = false;
+		if(previous==null)
+		{
+			previous = new Date();
+			ret = true;
+		}
+		else
+		{
+			Date currentTime = new Date();
+			Date windowTime = new Date();
+			windowTime.setTime(previous.getTime()+configuration.Config.getSensorRefreshWindow());
+			if(currentTime.compareTo(windowTime)>0)
+			{
+				ret = true;
+			}
+			else
+			{
+				ret = false;
+			}
+		}
 		
 		return ret;
 	}
