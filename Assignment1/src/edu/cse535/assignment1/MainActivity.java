@@ -46,35 +46,32 @@ public class MainActivity extends Activity {
     	
     	//Gather Device IP
     	Log.d(locationTag,"Starting application");
-    	getDeviceIP();
-        
-    	//Is gps enabled
-    	/*determineLocationEnabled();
+    	ip = getDeviceIP();
+    	Log.d(locationTag, "getDeviceIP returned:\t"+ip);
     	
-    	//If location is enabled launch the location listener
-    	if(gpsLocationEnabled|networkLocationEnabled)
+    	//Determine if some sort of location service is available on device
+    	Log.d("locationServiceAvailable", "Start determineLocationEnabled gps:\t"+gpsLocationEnabled+" network: "+networkLocationEnabled);
+    	determineLocationEnabled();
+    	Log.d("locationServiceAvailable", "End determineLocationEnabled gps:\t"+gpsLocationEnabled+" network: "+networkLocationEnabled);
+    	
+    	//Get Location from ip and or sensors using remote service
+    	//If both are unavailable then we will display no Location information available
+    	if(ip==null && !gpsLocationEnabled && !networkLocationEnabled)
     	{
-    		Log.d(locationTag,"Location service available");
-    		getDeviceLocation();
+    		Log.d("LocationGathering", "No Location Information Available");
     	}
-    	else
-    	{
-    		Log.d(locationTag,"Location service unavailable");
-    	}
     	
-    	
-    	if(location!=null)
+    	//If IP address is available get location from remote service
+    	if(ip!=null)
     	{
-    		Log.d(locationTag, location.getCity()+" "+location.getState());
+    		Log.d("LocationGathering","Start getDeviceLocationFromIP:\t"+ip);
+    		getDeviceLocationFromIP(ip);
+    		Log.d("LocationGathering","End getDeviceLocationFromIP:\t"+ip+"\n");
+
     		
     	}
-    	else
-    	{
-    		Log.d(locationTag, "No location available from IP");
-    	}
     	
-        
-        */
+    	
     }
     
     /**
@@ -92,7 +89,7 @@ public class MainActivity extends Activity {
     
     /**
      * Terminates application normally.  Cleans up data.
-     * 
+     
      * @param v Current screen user is looking at.  In this case the only screen
      * in the application
      */
@@ -113,11 +110,23 @@ public class MainActivity extends Activity {
     
     
     
-    private void getDeviceIP()
+    private String getDeviceIP()
     {
+    	String ret=null;
     	GetDeviceIPTask getIP = new GetDeviceIPTask();
 		getIP.execute(new String[] {IPServiceProviderUtil.getIPServiceURL()});
-		Log.d(locationTag,"IP after post ip");
+		try
+		{
+			ret = getIP.get(configuration.Config.getTimeout(), configuration.Config.getTimeoutTimeUnit());
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			ret=null;
+		}
+		Log.d(locationTag,"IP after post ip: "+ret);
+		return ret;
     }
     
     private void getDeviceLocationFromIP(String ip)
@@ -129,7 +138,7 @@ public class MainActivity extends Activity {
     private void determineLocationEnabled()
     {
     	//boolean ret = false;
-    	Log.d(locationTag,"Start Location Enabled");
+    	//Log.d(locationTag,"Start Location Enabled");
     	if(locationManager==null)
     	{
     		locationManager = (android.location.LocationManager) this.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
@@ -225,6 +234,7 @@ public class MainActivity extends Activity {
 			String ret = null;
 			Log.d(locationTag,"start device ip task :\t"+params[0]);
 			ret = IPServiceProviderUtil.getRawData(params[0]);
+			ret = IPServiceProviderUtil.parseIPFromCheckIP(ret);
 			return ret;
 		}
 
@@ -232,7 +242,6 @@ public class MainActivity extends Activity {
 	        // TODO: do somethisng with the feed
 	    	String result = IPServiceProviderUtil.parseIPFromCheckIP(feed);
 	    	Log.d(locationTag,"finished everything:\t"+result);
-	    	ip=result;
 	    	//getDeviceLocationFromIP(ip);
 	    	
 	    }
@@ -244,17 +253,18 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected commons.Location doInBackground(String... params) {
-			Log.d(locationTag,"Starting getLocationFromIPTask with param: "+params[0]);
+			//Log.d(locationTag,"Starting getLocationFromIPTask with param: "+params[0]);
 			commons.Location ret = null;
 			ret = processor.RequestProcessor.getLocationFromIP(params[0]);
-			Log.d(locationTag,"getLocationFromIPTask:\t "+ret.getCity()+" "+ret.getState());
+			//Log.d(locationTag,"getLocationFromIPTask:\t "+ret.getCity()+" "+ret.getState());
 			return ret;
 		}
 
 		@Override
 	    protected void onPostExecute(commons.Location feed) {
 	        // TODO: do somethisng with the feed
-	    	Log.d(locationTag,"End of IPTASK:\tcity:"+feed.getCity()+" state:"+feed.getState());
+			
+	    	Log.d("LocationGathering","End of IPTASK:\tcity:"+feed.getCity()+" state:"+feed.getState());
 	    	
 	    }
 		
