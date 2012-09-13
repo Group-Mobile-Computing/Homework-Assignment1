@@ -52,4 +52,8 @@ public class Coordinate {
 		this.latitude=latitude;
 	}
 
+	public String toString()
+	{
+		return this.getLatitude()+","+this.getLongitude();
+	}
 }

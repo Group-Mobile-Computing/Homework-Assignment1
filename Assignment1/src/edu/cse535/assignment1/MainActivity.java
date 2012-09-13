@@ -67,9 +67,16 @@ public class MainActivity extends Activity {
     		Log.d("LocationGathering","Start getDeviceLocationFromIP:\t"+ip);
     		getDeviceLocationFromIP(ip);
     		Log.d("LocationGathering","End getDeviceLocationFromIP:\t"+ip+"\n");
-
-    		
     	}
+    	else
+    	{
+    		//android.location.Location location = 
+    	}
+    	
+   
+    	//While getting location from IP process is running in async thread
+    	//Start up the location listening
+    	getDeviceLocation();
     	
     	
     }
@@ -182,11 +189,11 @@ public class MainActivity extends Activity {
 		 
 
 		public void onLocationChanged(android.location.Location location) {
-			//commons.Coordinate coordinate = 
+			//commons.Coordinate newCoordinate = new commons.Coordinate(location.getLongitude(), location.getLatitude());
 			if(LocationManager.isMoreAccurate(location,coordinate))
 			{
-				commons.Coordinate coordinate = new commons.Coordinate(location.getLongitude(), location.getLatitude());
-		    	if(gpsLocationEnabled)
+				coordinate = new commons.Coordinate(location.getLongitude(), location.getLatitude());
+		    	/*if(gpsLocationEnabled)
 		    	{
 		    		locationManager.requestLocationUpdates(android.location.LocationManager.GPS_PROVIDER,5 * 60 * 1000 , 0, locationTask);
 		    	}
@@ -196,9 +203,13 @@ public class MainActivity extends Activity {
 		    		{
 		    			locationManager.requestLocationUpdates(android.location.LocationManager.NETWORK_PROVIDER, 5 * 60 * 1000, 0, locationTask);
 		    		}
-		    	}
+		    	}*/
 				//protocol.deltaCoordinate(coordinate);
-				
+				Log.d("SensorLocation", "coordinate more accurate:\t"+coordinate.toString());
+			}
+			else
+			{
+				Log.d("SensorLocation", "Previous coordinate more accurate");
 			}
 		}
 
