@@ -207,7 +207,7 @@ public class RequestProcessor {
 	        	
 		        if (Data != null & Data.length() > 0) 
 		        {	        	
-		        	String state = "", city = "";
+		        	String state = null, city = null;
 		        	if (Data.contains(ProcessorProperties.LocationFromIPStateElement) && Data.contains(ProcessorProperties.LocationFromIPStateElementEnd))
 			        	state = Data.substring(
 		    	        		Data.indexOf(ProcessorProperties.LocationFromIPStateElement), Data.length()).
@@ -220,7 +220,7 @@ public class RequestProcessor {
 		        				substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromIPCityElement), Data.length()).
 		        				indexOf(ProcessorProperties.LocationFromIPCityElementEnd)).replace(ProcessorProperties.LocationFromIPCityElement, "");
 			        	
-		        	if ((state != null && state.length() > 0) || (city != null && city.length() > 0))
+		        	if ((state != null && state.length() > 0 && state != "-") || (city != null && city.length() > 0 && city != "-"))
 		        		location = 	new Location(state,city);
 		        } 
 	        }       
@@ -252,7 +252,7 @@ public class RequestProcessor {
 		        {		        	
 			        if (Data.length() > 0) 
 			        {	    
-			        	String state = "", city= "";
+			        	String state = null, city= null;
 			        	if (Data.contains(ProcessorProperties.LocationFromCoordinateStateElement) && Data.contains(ProcessorProperties.LocationFromCoordinateStateElementEnd))
 				        	state = Data.substring(
 			        				Data.indexOf(ProcessorProperties.LocationFromCoordinateStateElement), Data.length()).
@@ -265,7 +265,7 @@ public class RequestProcessor {
 			        				substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromCoordinateCityElement), Data.length()).
 			        				indexOf(ProcessorProperties.LocationFromCoordinateCityElementEnd)).replace(ProcessorProperties.LocationFromCoordinateCityElement, "");
 			        	
-			        	if ((state != null && state.length() > 0) || (city != null && city.length() > 0))
+			        	if ((state != null && state.length() > 0 && state != "-") || (city != null && city.length() > 0 & city != "-"))
 			        		location = 	new Location(state, city);
 			        }  
 		        }		        		              	  
