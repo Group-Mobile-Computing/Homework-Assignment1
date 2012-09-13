@@ -10,6 +10,12 @@ public class LocationManager implements android.location.LocationListener{
 	//private Activity caller;
 	
 
+	public static boolean isMoreAccurate(android.location.Location location, commons.Coordinate coordinate)
+	{
+		boolean ret = true;
+		
+		return ret;
+	}
 	
 	public boolean isUpdated()
 	{
