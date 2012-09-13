@@ -16,6 +16,7 @@ import android.content.Context;
 //import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -47,6 +48,8 @@ public class MainActivity extends Activity {
     	//Gather Device IP
     	Log.d(locationTag,"Starting application");
     	ip = getDeviceIP();
+    	Toast msg = Toast.makeText(getApplicationContext(), "ip: "+ip, Toast.LENGTH_LONG);
+		msg.show();
     	Log.d(locationTag, "getDeviceIP returned:\t"+ip);
     	
     	//Determine if some sort of location service is available on device
@@ -66,6 +69,7 @@ public class MainActivity extends Activity {
     	{
     		Log.d("LocationGathering","Start getDeviceLocationFromIP:\t"+ip);
     		getDeviceLocationFromIP(ip);
+    		
     		Log.d("LocationGathering","End getDeviceLocationFromIP:\t"+ip+"\n");
     	}
     	else
@@ -205,6 +209,8 @@ public class MainActivity extends Activity {
 		    		}
 		    	}*/
 				//protocol.deltaCoordinate(coordinate);
+				Toast msg = Toast.makeText(getApplicationContext(), "Coordinate: "+coordinate.toString(), Toast.LENGTH_LONG);
+				msg.show();
 				Log.d("SensorLocation", "coordinate more accurate:\t"+coordinate.toString());
 			}
 			else
@@ -276,6 +282,8 @@ public class MainActivity extends Activity {
 	        // TODO: do somethisng with the feed
 			
 	    	Log.d("LocationGathering","End of IPTASK:\tcity:"+feed.getCity()+" state:"+feed.getState());
+	    	Toast msg = Toast.makeText(getApplicationContext(), "location: "+feed.getCity()+" state:"+feed.getState(), Toast.LENGTH_LONG);
+			msg.show();
 	    	
 	    }
 		
