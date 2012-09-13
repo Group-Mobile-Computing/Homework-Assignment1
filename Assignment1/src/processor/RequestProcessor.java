@@ -193,7 +193,7 @@ public class RequestProcessor {
 	}
 	
 	/** 
-	 * Get Location as a Location object on the basis of provided IP.	 
+	 * Get Location in format "City, State" on the basis of provided IP.	 
 	 *  @param ipaddressofdevice string based IP address of the host.
 	 */
 	public static Location getLocationFromIP(String ipaddressofdevice)
@@ -207,14 +207,21 @@ public class RequestProcessor {
 	        	
 		        if (Data != null & Data.length() > 0) 
 		        {	        	
-		        	location = 	new Location(Data.substring(
+		        	String state = "", city = "";
+		        	if (Data.contains(ProcessorProperties.LocationFromIPStateElement) && Data.contains(ProcessorProperties.LocationFromIPStateElementEnd))
+			        	state = Data.substring(
 		    	        		Data.indexOf(ProcessorProperties.LocationFromIPStateElement), Data.length()).
 		    	        		substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromIPStateElement), Data.length()).
-		    	        		indexOf(ProcessorProperties.LocationFromIPStateElementEnd)).replace(ProcessorProperties.LocationFromIPStateElement, ""),
-		    	        		Data.substring(
+		    	        		indexOf(ProcessorProperties.LocationFromIPStateElementEnd)).replace(ProcessorProperties.LocationFromIPStateElement, "");
+		        	
+		        	if (Data.contains(ProcessorProperties.LocationFromIPCityElement) && Data.contains(ProcessorProperties.LocationFromIPCityElementEnd))
+			        	city = Data.substring(
 		        				Data.indexOf(ProcessorProperties.LocationFromIPCityElement), Data.length()).
 		        				substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromIPCityElement), Data.length()).
-		        				indexOf(ProcessorProperties.LocationFromIPCityElementEnd)).replace(ProcessorProperties.LocationFromIPCityElement, ""));
+		        				indexOf(ProcessorProperties.LocationFromIPCityElementEnd)).replace(ProcessorProperties.LocationFromIPCityElement, "");
+			        	
+		        	if ((state != null && state.length() > 0) || (city != null && city.length() > 0))
+		        		location = 	new Location(state,city);
 		        } 
 	        }       
 		}
@@ -227,7 +234,7 @@ public class RequestProcessor {
 	}
 
 	/** 
-	 * Get Location as a Location object on the basis of provided Coordinates (Longitude and Latitude Values).
+	 * Get Location in format "City, State" on the basis of provided Coordinates (Longitude and Latitude Values).
 	 * *  @param ipaddressofdevice string based IP address of the host.
 	 */
 	public static Location getLocationFromCoordinate(Coordinate coordinate)
@@ -244,15 +251,22 @@ public class RequestProcessor {
 		        if (Data != null)
 		        {		        	
 			        if (Data.length() > 0) 
-			        {	        	
-			        	location = 	new Location(Data.substring(
+			        {	    
+			        	String state = "", city= "";
+			        	if (Data.contains(ProcessorProperties.LocationFromCoordinateStateElement) && Data.contains(ProcessorProperties.LocationFromCoordinateStateElementEnd))
+				        	state = Data.substring(
 			        				Data.indexOf(ProcessorProperties.LocationFromCoordinateStateElement), Data.length()).
 			        				substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromCoordinateStateElement), Data.length()).
-			        				indexOf(ProcessorProperties.LocationFromCoordinateStateElementEnd)).replace(ProcessorProperties.LocationFromCoordinateStateElement, ""),
-			        				Data.substring(
+			        				indexOf(ProcessorProperties.LocationFromCoordinateStateElementEnd)).replace(ProcessorProperties.LocationFromCoordinateStateElement, "");
+
+			        	if (Data.contains(ProcessorProperties.LocationFromCoordinateCityElement) && Data.contains(ProcessorProperties.LocationFromCoordinateCityElementEnd))
+				        	city = Data.substring(
 			        				Data.indexOf(ProcessorProperties.LocationFromCoordinateCityElement), Data.length()).
 			        				substring(0, Data.substring(Data.indexOf(ProcessorProperties.LocationFromCoordinateCityElement), Data.length()).
-			        				indexOf(ProcessorProperties.LocationFromCoordinateCityElementEnd)).replace(ProcessorProperties.LocationFromCoordinateCityElement, ""));
+			        				indexOf(ProcessorProperties.LocationFromCoordinateCityElementEnd)).replace(ProcessorProperties.LocationFromCoordinateCityElement, "");
+			        	
+			        	if ((state != null && state.length() > 0) || (city != null && city.length() > 0))
+			        		location = 	new Location(state, city);
 			        }  
 		        }		        		              	  
 			}
