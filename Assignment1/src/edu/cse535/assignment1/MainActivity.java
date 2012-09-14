@@ -23,14 +23,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.List;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
-import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
-import com.google.android.maps.Projection;
+//import com.google.android.maps.GeoPoint;
+//import com.google.android.maps.MapActivity;
+//import com.google.android.maps.MapController;
+//import com.google.android.maps.MapView;
+//import com.google.android.maps.MyLocationOverlay;
+//import com.google.android.maps.Overlay;
+//import com.google.android.maps.OverlayItem;
+//import com.google.android.maps.Projection;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
 	//Initializations
 	TextView joke;
 	Button getjoke;
-    GeoPoint geoPoint;
+    //GeoPoint geoPoint;
     TextView locationview;
     //Initializations
 
@@ -80,27 +80,24 @@ public class MainActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		
+	
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
 		//--------------------------------------------View-----------------------------------------//
 		 //Map View
-        MapView mapview=(MapView) findViewById(R.id.mapview);
-        MapController mc=mapview.getController();
-        
-        GeoPoint geoPoint = new GeoPoint( (int) (33.82* 1E6), (int) (-111.7 * 1E6));
-
-        
-        mc.setZoom(10);
-        mc.animateTo(geoPoint);
-        
-        mc.setCenter(geoPoint);
-
-        mapview.setBuiltInZoomControls(true);
+//	        MapView mapview=(MapView) findViewById(R.id.mapview);
+//	        MapController mc=mapview.getController();	        
+//	        GeoPoint geoPoint = new GeoPoint( (int) (33.82* 1E6), (int) (-111.7 * 1E6));	        
+//	        mc.setZoom(10);
+//	        mc.animateTo(geoPoint);	        
+//	        mc.setCenter(geoPoint);	
+//	        mapview.setBuiltInZoomControls(true);
         //Map View
         
         //Display Joke of the Day
         
 	
-        String location = "Tempe,Pheonix";
+//        String location = "Tempe,Pheonix";
 		joke=(TextView) findViewById(R.id.joke);
         
         getjoke=(Button) findViewById(R.id.getjoke);
@@ -110,10 +107,10 @@ public class MainActivity extends Activity {
 		//Display Joke of the Day
 		
 		//Display Locations
-		if(location.trim().length() != 0)
-		{
-			locationview.setText(location);
-		}
+//		if(location.trim().length() != 0)
+//		{
+//			locationview.setText(location);
+//		}
 		//Display Locations
 	
 		//Refresh Button Click Listener
@@ -145,7 +142,7 @@ public class MainActivity extends Activity {
 		
 		
 
-		super.onCreate(savedInstanceState);
+	
 
 //		//Load in the layout from UI
 //		setContentView(ui.Dummy.getContentView());
@@ -157,42 +154,42 @@ public class MainActivity extends Activity {
 //		ui.Dummy.setWaitingJoke();
 //		ui.Dummy.setWaitingLocation();
 
-		//Gather Device IP
-		Log.d(locationTag,"Starting application");
-		updateDeviceIP();
-		//Toast msg = Toast.makeText(getApplicationContext(), "ip: "+ip, Toast.LENGTH_LONG);
-		//msg.show();
-		Log.d(locationTag, "getDeviceIP returned:\t"+ip);
-
-		//Determine if some sort of location service is available on device
-		Log.d("locationServiceAvailable", "Start determineLocationEnabled gps:\t"+gpsLocationEnabled+" network: "+networkLocationEnabled);
-		determineLocationEnabled();
-		Log.d("locationServiceAvailable", "End determineLocationEnabled gps:\t"+gpsLocationEnabled+" network: "+networkLocationEnabled);
-
-		//Get Location from ip and or sensors using remote service
-		//If both are unavailable then we will display no Location information available
-		if(ip==null && !gpsLocationEnabled && !networkLocationEnabled)
-		{
-			Log.d("LocationGathering", "No Location Information Available");
-		}
-
-		//If IP address is available get location from remote service
-		if(ip!=null)
-		{
-			Log.d("LocationGathering","Start getDeviceLocationFromIP:\t"+ip);
-			getDeviceLocationFromIP(ip);
-
-			Log.d("LocationGathering","End getDeviceLocationFromIP:\t"+ip+"\n");
-		}
-		else
-		{
-			//Ip is not available
-		}
-
-
-		//While getting location from IP process is running in async thread
-		//Start up the location listening which will update the Location UI section
-		updateDeviceLocation();
+//		//Gather Device IP
+//		Log.d(locationTag,"Starting application");
+//		updateDeviceIP();
+//		//Toast msg = Toast.makeText(getApplicationContext(), "ip: "+ip, Toast.LENGTH_LONG);
+//		//msg.show();
+//		Log.d(locationTag, "getDeviceIP returned:\t"+ip);
+//
+//		//Determine if some sort of location service is available on device
+//		Log.d("locationServiceAvailable", "Start determineLocationEnabled gps:\t"+gpsLocationEnabled+" network: "+networkLocationEnabled);
+//		determineLocationEnabled();
+//		Log.d("locationServiceAvailable", "End determineLocationEnabled gps:\t"+gpsLocationEnabled+" network: "+networkLocationEnabled);
+//
+//		//Get Location from ip and or sensors using remote service
+//		//If both are unavailable then we will display no Location information available
+//		if(ip==null && !gpsLocationEnabled && !networkLocationEnabled)
+//		{
+//			Log.d("LocationGathering", "No Location Information Available");
+//		}
+//
+//		//If IP address is available get location from remote service
+//		if(ip!=null)
+//		{
+//			Log.d("LocationGathering","Start getDeviceLocationFromIP:\t"+ip);
+//			getDeviceLocationFromIP(ip);
+//
+//			Log.d("LocationGathering","End getDeviceLocationFromIP:\t"+ip+"\n");
+//		}
+//		else
+//		{
+//			//Ip is not available
+//		}
+//
+//
+//		//While getting location from IP process is running in async thread
+//		//Start up the location listening which will update the Location UI section
+//		updateDeviceLocation();
 
 	}
 
@@ -207,13 +204,16 @@ public class MainActivity extends Activity {
 	public void refresh(View v)
 	{
 		//Call the method setjoketext(jokeoftheday, flag) with two parameters to set the view
+		
+		setjoketext("Joke Refresh", false);
+		setlocationtext(null, true);
 	}
 	
 	
 	// Sets the joke of the day field
-	public void setjoketext(String jokeoftheday,Boolean jokeflag)
+	public void setjoketext(String jokeoftheday,Boolean errorflag)
 	{
-		if(!jokeflag)
+		if(errorflag)
 		{
 			joke.setBackgroundColor(Color.DKGRAY);
 			joke.setTextColor(Color.RED);
@@ -225,6 +225,24 @@ public class MainActivity extends Activity {
 		}
 	}
 	// Sets the joke of the day field
+	
+	// Sets the Location of the day field
+		public void setlocationtext(Location locationObj,Boolean errorflag)
+		{
+			if(errorflag)
+			{
+				locationview.setBackgroundColor(Color.DKGRAY);
+				locationview.setTextColor(Color.RED);
+				locationview.setText("Unable to detect the location. Please try again!");
+				
+			}			
+			else
+			{
+				locationview.setText("City: " +  locationObj.getCity() + " " +  "State: " + locationObj.getState());;
+			}
+		}
+		// Sets the joke of the day field
+	
 	/**
 	 * Terminates application normally.  Cleans up data.
 
