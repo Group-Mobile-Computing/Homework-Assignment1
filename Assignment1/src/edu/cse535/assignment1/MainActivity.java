@@ -193,7 +193,7 @@ public class MainActivity extends Activity {
 	 */
 	public void setJokeText(String jokeoftheday,Boolean errorflag)
 	{
-		joke.setText("");
+		joke.setText("											");
 		if(errorflag)
 		{
 			joke.setBackgroundColor(Color.DKGRAY);
@@ -213,7 +213,7 @@ public class MainActivity extends Activity {
 	 */
 	public void setJokeWaiting()
 	{
-		joke.setBackgroundColor(Color.DKGRAY);
+		joke.setBackgroundColor(Color.TRANSPARENT);
 		joke.setTextColor(Color.GREEN);
 		joke.setText(JOKE_WAITING);
 	}
@@ -227,8 +227,10 @@ public class MainActivity extends Activity {
 	 */
 	public void setLocationText(Location locationObj,Boolean errorflag)
 	{
-		locationview.setText("");
-		locationview.setBackgroundColor(Color.TRANSPARENT);
+	
+		
+		
+		
 		if(errorflag)
 		{
 			
@@ -241,8 +243,9 @@ public class MainActivity extends Activity {
 		{
 			locationview.setBackgroundColor(Color.TRANSPARENT);
 			locationview.setTextColor(Color.WHITE);
-			locationview.setText("City: " +  locationObj.getCity() + " " +  "State: " + locationObj.getState());;
+			locationview.setText("City: " +  locationObj.getCity() + " " +  "State: " + locationObj.getState()+"\n");
 		}
+		
 	}	
 
 	/**
@@ -250,9 +253,9 @@ public class MainActivity extends Activity {
 	 */
 	public void setLocationWaiting()
 	{
-		locationview.setBackgroundColor(Color.DKGRAY);
+		locationview.setBackgroundColor(Color.TRANSPARENT);
 		locationview.setTextColor(Color.GREEN);
-		locationview.setText(LOCATION_WAITING);
+		locationview.setText("\n"+LOCATION_WAITING);
 	}
 
 
@@ -278,6 +281,23 @@ public class MainActivity extends Activity {
 
 
 
+	/*@Override
+	public void onPause()
+	{
+		super.onPause();
+		LOCATION_MANAGER.removeUpdates(LOCATION_TASK);
+		LOCATION_TASK=null;
+		IP=null;
+		VALID_IP=null;
+		JOKE=null;
+		VALID_JOKE=null;
+		LOCATION=null;
+		VALID_LOCATION=null;
+		LOCATION_MANAGER=null;
+		COORDINATE=null;
+		VALID_COORDINATE=null;
+		created=0;
+	}*/
 	/**
 	 * Terminates application normally.  Cleans up data.
 
@@ -327,7 +347,7 @@ public class MainActivity extends Activity {
 		getIPSituation();
 
 		String ret=null;
-		Toast msg = Toast.makeText(getApplicationContext(), "Nothing to say", Toast.LENGTH_LONG);
+		//Toast msg = Toast.makeText(getApplicationContext(), "Nothing to say", Toast.LENGTH_LONG);
 		switch(getIPSituation())
 		{
 		case 0:
@@ -345,15 +365,15 @@ public class MainActivity extends Activity {
 				e.printStackTrace();
 				ret=null;
 			}
-			msg = Toast.makeText(getApplicationContext(), "IP first update:\t"+IP, Toast.LENGTH_LONG);
+			//msg = Toast.makeText(getApplicationContext(), "IP first update:\t"+IP, Toast.LENGTH_LONG);
 			break;
 		case 1:
 			GetDeviceIPTask getIP = new GetDeviceIPTask();
 			getIP.execute(new String[] {IPServiceProviderUtil.getIPServiceURL()});
-			msg = Toast.makeText(getApplicationContext(), "IP not fresh:\t"+IP, Toast.LENGTH_LONG);
+			//msg = Toast.makeText(getApplicationContext(), "IP not fresh:\t"+IP, Toast.LENGTH_LONG);
 			break;
 		case 2:
-			msg = Toast.makeText(getApplicationContext(), "IP still fresh:\t"+IP, Toast.LENGTH_LONG);
+			//msg = Toast.makeText(getApplicationContext(), "IP still fresh:\t"+IP, Toast.LENGTH_LONG);
 			break;
 		case -1:
 			break;
@@ -399,7 +419,7 @@ public class MainActivity extends Activity {
 				msg = Toast.makeText(getApplicationContext(), "IP not fresh:\t"+IP, Toast.LENGTH_LONG);
 			}
 		}*/
-		msg.show();
+		//msg.show();
 	}
 
 	/**
@@ -470,35 +490,35 @@ public class MainActivity extends Activity {
 	{
 		//int situation = 0;
 		//Have we gotten a location previously
-		Toast msg = Toast.makeText(getApplicationContext(), "Nothing to say", Toast.LENGTH_LONG);
+		//Toast msg = Toast.makeText(getApplicationContext(), "Nothing to say", Toast.LENGTH_LONG);
 		switch(getLocationSitutation())
 		{
 		case 1:
 			//first location gathering
-			msg = Toast.makeText(getApplicationContext(), "First Location Gathering", Toast.LENGTH_LONG);
+			///msg = Toast.makeText(getApplicationContext(), "First Location Gathering", Toast.LENGTH_LONG);
 			updateLocation();
 			break;
 		case 2:
 			//nth location gathering, location is still fresh
 			//Do nothing location is still up to date
-			msg = Toast.makeText(getApplicationContext(), "Location Still Fresh city "+LOCATION.getCity()+" state "+LOCATION.getState(), Toast.LENGTH_LONG);
+			//msg = Toast.makeText(getApplicationContext(), "Location Still Fresh city "+LOCATION.getCity()+" state "+LOCATION.getState(), Toast.LENGTH_LONG);
 			break;
 		case 3:
 			//nth location gathering, location is still fresh but no location
-			//object is null
-			msg = Toast.makeText(getApplicationContext(), "Location null and Fresh", Toast.LENGTH_LONG);
+			///object is null
+			//msg = Toast.makeText(getApplicationContext(), "Location null and Fresh", Toast.LENGTH_LONG);
 			updateLocation();
 			break;
 		case 4:
 			//nth location gathering, location is outdated
-			msg = Toast.makeText(getApplicationContext(), "Location Outdated city "+LOCATION.getCity()+" state "+LOCATION.getState(), Toast.LENGTH_LONG);
+			//msg = Toast.makeText(getApplicationContext(), "Location Outdated city "+LOCATION.getCity()+" state "+LOCATION.getState(), Toast.LENGTH_LONG);
 			updateLocation();
 			break;
 		default:
 			break;
 		}
 
-		msg.show();
+		//msg.show();
 	}
 
 	/**
@@ -981,8 +1001,8 @@ public class MainActivity extends Activity {
 	 *------------------------------------------------------------------------------*/
 	private void print(String text)
 	{
-		Toast msg = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
-		msg.show();
+		/*Toast msg = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
+		msg.show();*/
 	}
 
 }
