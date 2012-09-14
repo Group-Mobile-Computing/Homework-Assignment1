@@ -19,10 +19,45 @@ import android.content.Context;
 //import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+import java.util.List;
+
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
+import com.google.android.maps.Projection;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.view.MotionEvent;
+import android.view.View.OnClickListener;
+import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
+	//Initializations
+	TextView joke;
+	Button getjoke;
+    GeoPoint geoPoint;
+    TextView locationview;
+    //Initializations
 
 	static Date		ipRefreshed			= 	null;
 	static Date		locationRefreshed	=	null;
@@ -45,18 +80,93 @@ public class MainActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
+		//--------------------------------------------View-----------------------------------------//
+		 //Map View
+        MapView mapview=(MapView) findViewById(R.id.mapview);
+        MapController mc=mapview.getController();
+        
+        GeoPoint geoPoint = new GeoPoint( (int) (33.82* 1E6), (int) (-111.7 * 1E6));
+
+        
+        mc.setZoom(10);
+        mc.animateTo(geoPoint);
+        
+        mc.setCenter(geoPoint);
+
+        mapview.setBuiltInZoomControls(true);
+        //Map View
+        
+        //Display Joke of the Day
+ String jokeoftheday="Life isn't like a box of chocolates. It's more like a jar of jalapenos. What you do today, might burn your butt tomorrow.";
+	
+ String location = "Tempe,Pheonix";
+		joke=(TextView) findViewById(R.id.joke);
+        
+        getjoke=(Button) findViewById(R.id.getjoke);
+        
+        locationview = (TextView) findViewById(R.id.location); 
+
+		if(jokeoftheday.trim().length()==0)
+		{
+			joke.setBackgroundColor(Color.DKGRAY);
+			joke.setTextColor(Color.RED);
+			joke.setText("Unable to reach the server. Please try again later.");
+		}
+		/*Call  method to get joke and assign to jokeoftheday*/
+		else
+		{
+			joke.setText(jokeoftheday);
+		}
+		//Display Joke of the Day
+		
+		//Display Locations
+		if(location.trim().length() != 0)
+		{
+			locationview.setText(location);
+		}
+		//Display Locations
+	
+		//Refresh Button Click Listener
+		getjoke.setOnClickListener(new OnClickListener()
+        {
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				String jokeoftheday="Life isn't like a box of chocolates. It's more like a jar of jalapenos. What you do today, might burn your butt tomorrow.";
+				
+				if(jokeoftheday.trim().length()==0)
+				{
+					joke.setBackgroundColor(Color.DKGRAY);
+					joke.setTextColor(Color.RED);
+					joke.setText("Unable to reach the server. Please try again later.");
+				}
+				/*Call  method to get joke and assigne to jokeoftheday*/
+				else
+				{
+					joke.setText(jokeoftheday);
+				}
+			}
+        	
+        });
+		//Refresh Joke Button Listener
+		
+		
+		//--------------------------------------------View-----------------------------------------//
+		
+		
+		
 
 		super.onCreate(savedInstanceState);
 
-		//Load in the layout from UI
-		setContentView(ui.Dummy.getContentView());
-
-		//Create the Protocol object we need
-		// protocol = new logic.Protocol();
-
-		//Set Location and Joke to processing state
-		ui.Dummy.setWaitingJoke();
-		ui.Dummy.setWaitingLocation();
+//		//Load in the layout from UI
+//		setContentView(ui.Dummy.getContentView());
+//
+//		//Create the Protocol object we need
+//		// protocol = new logic.Protocol();
+//
+//		//Set Location and Joke to processing state
+//		ui.Dummy.setWaitingJoke();
+//		ui.Dummy.setWaitingLocation();
 
 		//Gather Device IP
 		Log.d(locationTag,"Starting application");
@@ -155,6 +265,7 @@ public class MainActivity extends Activity {
 	private void updateDeviceIP()
 	{
 
+	
 
 		String ret=null;
 		Toast msg;
