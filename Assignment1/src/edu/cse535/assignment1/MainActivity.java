@@ -275,6 +275,8 @@ public class MainActivity extends Activity {
 		FROM_COORDINATE = FROM_IP=false;
 		setJokeWaiting();
 		setLocationWaiting();
+		updateDeviceIP();
+		determineLocationEnabled();
 		updateLocation();
 		updateJoke();
 	}
@@ -380,46 +382,7 @@ public class MainActivity extends Activity {
 		default:
 			break;
 		}
-		/*if(VALID_IP==null)
-		{
-			//never updated
-			//we are using async thread and waiting 3 seconds
-			GetDeviceIPTask getIP = new GetDeviceIPTask();
-			getIP.execute(new String[] {IPServiceProviderUtil.getIPServiceURL()});
-			try
-			{
-				ret = getIP.get(configuration.Config.getTimeout(), configuration.Config.getTimeoutTimeUnit());
-				setIP(ret);
 
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-				ret=null;
-			}
-			msg = Toast.makeText(getApplicationContext(), "IP first update:\t"+IP, Toast.LENGTH_LONG);
-		}
-		else
-		{
-			Date currentTime = new Date();
-			Date windowTime = new Date();
-			windowTime.setTime(VALID_IP.getTime()+configuration.Config.getIPRefreshWindow());
-			if(currentTime.compareTo(windowTime)<1)
-			{
-				//Last refresh time was recent
-				//we are doing nothing
-				msg = Toast.makeText(getApplicationContext(), "IP still fresh:\t"+IP, Toast.LENGTH_LONG);
-			}
-			else
-			{
-				//last refresh time was not recent
-				//we are using the async thread but not waiting
-				GetDeviceIPTask getIP = new GetDeviceIPTask();
-				getIP.execute(new String[] {IPServiceProviderUtil.getIPServiceURL()});
-				msg = Toast.makeText(getApplicationContext(), "IP not fresh:\t"+IP, Toast.LENGTH_LONG);
-			}
-		}*/
-		//msg.show();
 	}
 
 	/**
@@ -616,24 +579,34 @@ public class MainActivity extends Activity {
 	private void updateLocation()
 	{
 
-		if(COORDINATE == null)
+		if(!(IP==null && networkLocationEnabled && gpsLocationEnabled))
 		{
-			print("Updating Location From IP");
-			//We do not have a gps coordinate
-			//This can be from locationTask not being created, or no sensors available
+			if(COORDINATE == null)
+			{
+				print("Updating Location From IP");
+				//We do not have a gps coordinate
+				//This can be from locationTask not being created, or no sensors available
 
-			//IF we do not have a sensor listener then create one
-			createLocationListener();
+				//IF we do not have a sensor listener then create one
+				createLocationListener();
 
-			//If we do not have gps coordinates because we do not have sensors or we do not have a fix lets get the location from IP
-			getDeviceLocationFromIP(IP);
+				//If we do not have gps coordinates because we do not have sensors or we do not have a fix lets get the location from IP
+				getDeviceLocationFromIP(IP);
 
+			}
+			else
+			{
+				//We have sensor data so lets use the other service
+				print("Updating Location From Coordinate");
+				getDeviceLocationFromCoordinate(COORDINATE);
+			}
 		}
 		else
 		{
-			//We have sensor data so lets use the other service
-			print("Updating Location From Coordinate");
-			getDeviceLocationFromCoordinate(COORDINATE);
+			FROM_IP=true;
+			FROM_COORDINATE=true;
+			setLocation(null);
+			updateDeviceIP();
 		}
 	}
 
