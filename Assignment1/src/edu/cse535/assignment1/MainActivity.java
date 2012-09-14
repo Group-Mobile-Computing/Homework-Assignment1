@@ -98,7 +98,7 @@ public class MainActivity extends Activity {
         //Map View
         
         //Display Joke of the Day
-        String jokeoftheday="Life isn't like a box of chocolates. It's more like a jar of jalapenos. What you do today, might burn your butt tomorrow.";
+        
 	
         String location = "Tempe,Pheonix";
 		joke=(TextView) findViewById(R.id.joke);
@@ -107,17 +107,6 @@ public class MainActivity extends Activity {
         
         locationview = (TextView) findViewById(R.id.location); 
 
-		if(jokeoftheday.trim().length()==0)
-		{
-			joke.setBackgroundColor(Color.DKGRAY);
-			joke.setTextColor(Color.RED);
-			joke.setText("Unable to reach the server. Please try again later.");
-		}
-		/*Call  method to get joke and assign to jokeoftheday*/
-		else
-		{
-			joke.setText(jokeoftheday);
-		}
 		//Display Joke of the Day
 		
 		//Display Locations
