@@ -98,9 +98,9 @@ public class MainActivity extends Activity {
         //Map View
         
         //Display Joke of the Day
- String jokeoftheday="Life isn't like a box of chocolates. It's more like a jar of jalapenos. What you do today, might burn your butt tomorrow.";
+        String jokeoftheday="Life isn't like a box of chocolates. It's more like a jar of jalapenos. What you do today, might burn your butt tomorrow.";
 	
- String location = "Tempe,Pheonix";
+        String location = "Tempe,Pheonix";
 		joke=(TextView) findViewById(R.id.joke);
         
         getjoke=(Button) findViewById(R.id.getjoke);
@@ -128,26 +128,26 @@ public class MainActivity extends Activity {
 		//Display Locations
 	
 		//Refresh Button Click Listener
-		getjoke.setOnClickListener(new OnClickListener()
-        {
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				String jokeoftheday="Life isn't like a box of chocolates. It's more like a jar of jalapenos. What you do today, might burn your butt tomorrow.";
-				
-				if(jokeoftheday.trim().length()==0)
-				{
-					joke.setBackgroundColor(Color.DKGRAY);
-					joke.setTextColor(Color.RED);
-					joke.setText("Unable to reach the server. Please try again later.");
-				}
-				/*Call  method to get joke and assigne to jokeoftheday*/
-				else
-				{
-					joke.setText(jokeoftheday);
-				}
-			}
-        	
-        });
+//		getjoke.setOnClickListener(new OnClickListener()
+//        {
+//			public void onClick(View arg0) {
+//				// TODO Auto-generated method stub
+//				String jokeoftheday="Life isn't like a box of chocolates. It's more like a jar of jalapenos. What you do today, might burn your butt tomorrow.";
+//				
+//				if(jokeoftheday.trim().length()==0)
+//				{
+//					joke.setBackgroundColor(Color.DKGRAY);
+//					joke.setTextColor(Color.RED);
+//					joke.setText("Unable to reach the server. Please try again later.");
+//				}
+//				/*Call  method to get joke and assigne to jokeoftheday*/
+//				else
+//				{
+//					joke.setText(jokeoftheday);
+//				}
+//			}
+//        	
+//        });
 		//Refresh Joke Button Listener
 		
 		
@@ -215,11 +215,27 @@ public class MainActivity extends Activity {
 	 * @param v  Current screen user is looking at.  In this case the only screen
 	 * in the application
 	 */
-	private void refresh(View v)
+	public void refresh(View v)
 	{
-
+		//Call the method setjoketext(jokeoftheday, flag) with two parameters to set the view
 	}
-
+	
+	
+	// Sets the joke of the day field
+	public void setjoketext(String jokeoftheday,Boolean jokeflag)
+	{
+		if(!jokeflag)
+		{
+			joke.setBackgroundColor(Color.DKGRAY);
+			joke.setTextColor(Color.RED);
+			joke.setText(jokeoftheday);
+		}
+		else
+		{
+			joke.setText(jokeoftheday);
+		}
+	}
+	// Sets the joke of the day field
 	/**
 	 * Terminates application normally.  Cleans up data.
 
